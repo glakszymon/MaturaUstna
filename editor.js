@@ -1,6 +1,6 @@
 const { createApp, ref, reactive, onMounted, watch } = Vue;
 
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwkmyMNmn9Hi0yCnRK5awfyEWSUiNwFwRNak6RUe_3gFpHObpT2_Pnf_7Sfh74u4nxX/exec';
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxGyupicyj0vjiKjRprtPgpAzmEWEVTi6t4o3i7Sc_2gm5Mx5lB_0OWvH3SEEj6CN9S/exec';
 
 const app = createApp({
     template: `
@@ -103,125 +103,80 @@ const app = createApp({
         const errorMessage = ref('');
         
         const formData = reactive({
-            wstep: '',
-            teza: '',
-            arg1_tytul: '',
-            arg1_rozwiniecie: '',
-            arg1_przyklad: '',
-            arg1_wniosek: '',
-            arg2_tytul: '',
-            arg2_rozwiniecie: '',
-            arg2_przyklad: '',
-            arg2_wniosek: '',
-            kontekst: '',
-            podsumowanie: ''
+            wstep: '', teza: '', arg1_tytul: '', arg1_rozwiniecie: '', 
+            arg1_przyklad: '', arg1_wniosek: '', arg2_tytul: '', 
+            arg2_rozwiniecie: '', arg2_przyklad: '', arg2_wniosek: '', 
+            kontekst: '', podsumowanie: ''
         });
 
-        const saveAnswer = async () => {
-            if (!selectedQuestionId.value) {
-                errorMessage.value = 'Wybierz pytanie!';
-                setTimeout(() => { errorMessage.value = ''; }, 3000);
-                return;
+        // 1. Uniwersalna funkcja pobierania danych
+        const loadData = async () => {
+            try {
+                const response = await fetch(GOOGLE_SCRIPT_URL); // GET jest domyślny, brak nagłówków = brak problemów
+                const data = await response.json();
+                questionList.value = data.questions || [];
+                answerDatabase.value = data.answers || [];
+            } catch (error) {
+                console.error('Błąd ładowania:', error);
+                errorMessage.value = 'Błąd połączenia z bazą.';
             }
+        };
+
+        // 2. Poprawiony zapis (Ominięcie preflight OPTIONS)
+        const saveAnswer = async () => {
+            if (!selectedQuestionId.value) return;
 
             const payload = {
                 type: 'ADD_ANSWER',
                 user: sessionStorage.getItem('username') || 'editor',
                 id: selectedQuestionId.value,
-                data: formData
+                data: { ...formData }
             };
 
             try {
                 const response = await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
+                    mode: 'no-cors', // Ważne przy GAS, jeśli nie potrzebujesz czytać odpowiedzi JSON
+                    // LUB (lepiej):
                     mode: 'cors',
-                    credentials: 'omit',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'text/plain' }, // Omija OPTIONS preflight
                     body: JSON.stringify(payload)
                 });
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const text = await response.text();
-                
-                if (!text) {
-                    throw new Error('Pusta odpowiedź z serwera');
-                }
-
-                const responseData = JSON.parse(text);
-                if (responseData.success) {
-                    successMessage.value = '✅ Odpowiedź zapisana pomyślnie!';
-                    setTimeout(() => { successMessage.value = ''; }, 3000);
-                    // Odśwież bazę danych
-                    await reloadAnswerDatabase();
-                } else {
-                    errorMessage.value = responseData.message || 'Błąd przy zapisywaniu';
-                    setTimeout(() => { errorMessage.value = ''; }, 3000);
+                // Uwaga: Przy mode: 'no-cors' nie odczytasz response.ok. 
+                // Jeśli używasz text/plain + cors, możesz:
+                const result = await response.json();
+                if (result.status === "success" || result.success) {
+                    successMessage.value = '✅ Zapisano pomyślnie!';
+                    await loadData(); // Odśwież bazę
                 }
             } catch (error) {
-                errorMessage.value = 'Błąd połączenia: ' + error.message;
-                console.error('Błąd zapisywania:', error);
-                setTimeout(() => { errorMessage.value = ''; }, 3000);
+                errorMessage.value = 'Błąd zapisu: ' + error.message;
             }
         };
 
-        const reloadAnswerDatabase = async () => {
-            try {
-                const response = await fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'GET',
-                    mode: 'cors',
-                    credentials: 'omit',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-                const text = await response.text();
-                const data = JSON.parse(text);
-                answerDatabase.value = data.answers || [];
-            } catch (error) {
-                console.error('Błąd odświeżania bazy odpowiedzi:', error);
-            }
+        // 3. Funkcja czyszcząca same pola (bez ID)
+        const clearFields = () => {
+            Object.keys(formData).forEach(key => formData[key] = '');
         };
 
         const resetForm = () => {
-            Object.assign(formData, {
-                wstep: '',
-                teza: '',
-                arg1_tytul: '',
-                arg1_rozwiniecie: '',
-                arg1_przyklad: '',
-                arg1_wniosek: '',
-                arg2_tytul: '',
-                arg2_rozwiniecie: '',
-                arg2_przyklad: '',
-                arg2_wniosek: '',
-                kontekst: '',
-                podsumowanie: ''
-            });
+            clearFields();
             selectedQuestionId.value = '';
         };
 
-        // Watcher - automatycznie uzupełnia formularz quando pytanie jest wybrane
+        // 4. Poprawiony Watcher
         watch(selectedQuestionId, (newId) => {
-            if (!newId || newId === '') {
-                resetForm();
+            if (!newId) {
+                clearFields();
                 return;
             }
 
-            // Szukamy odpowiedzi dla wybranego pytania po ID
-            // Dane z GAS mają strukturę: { id: "1", wstep: "...", ... } bo są parsowane z nagłówkami
-            const existingAnswer = answerDatabase.value.find(answer => {
-                if (!answer) return false;
-                const answerId = answer.id || answer.ID;
-                return answerId && answerId.toString().trim() === newId.toString().trim();
-            });
+            const existingAnswer = answerDatabase.value.find(a => 
+                (a.id || a.ID || "").toString() === newId.toString()
+            );
 
             if (existingAnswer) {
-                // Uzupełniamy formularz danymi z bazy
                 Object.assign(formData, {
                     wstep: existingAnswer.wstep || '',
                     teza: existingAnswer.teza || '',
@@ -236,56 +191,14 @@ const app = createApp({
                     kontekst: existingAnswer.kontekst || '',
                     podsumowanie: existingAnswer.podsumowanie || ''
                 });
-                successMessage.value = '✏️ Dane załadowane z bazy - edytuj odpowiedź';
-                setTimeout(() => { successMessage.value = ''; }, 2000);
             } else {
-                // Jeśli odpowiedź nie istnieje, czyszczmy formularz
-                resetForm();
-                selectedQuestionId.value = newId;
+                clearFields(); // Czyścimy pola tekstowe, ale zostawiamy wybrane ID!
             }
         });
 
-        onMounted(async () => {
-            try {
-                const response = await fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'GET',
-                    mode: 'cors',
-                    credentials: 'omit',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const text = await response.text();
-                
-                if (!text) {
-                    throw new Error('Pusta odpowiedź z serwera');
-                }
-                
-                const data = JSON.parse(text);
-                questionList.value = data.questions || [];
-                answerDatabase.value = data.answers || [];
-            } catch (error) {
-                console.error('Błąd ładowania danych:', error);
-                errorMessage.value = 'Błąd ładowania danych: ' + error.message;
-                setTimeout(() => { errorMessage.value = ''; }, 5000);
-            }
-        });
+        onMounted(loadData);
 
-        return {
-            questionList,
-            selectedQuestionId,
-            formData,
-            successMessage,
-            errorMessage,
-            saveAnswer,
-            resetForm,
-            reloadAnswerDatabase
-        };
+        return { questionList, selectedQuestionId, formData, successMessage, errorMessage, saveAnswer, resetForm };
     }
 });
 
