@@ -99,18 +99,51 @@ body {
 
 /* --- DASHBOARD HERO --- */
 .dashboard-hero {
-    display: flex; justify-content: space-between; align-items: center;
+    display: flex; flex-direction: column; gap: 30px;
     background: var(--bg-dark); color: white; padding: 30px 40px;
     border-radius: 24px; margin-bottom: 40px; position: relative; overflow: hidden;
 }
 .hero-content h2 { margin: 0 0 5px; font-size: 1.8rem; }
 .hero-content p { margin: 0; opacity: 0.7; }
+
+.progress-stats {
+    display: flex; justify-content: space-between; align-items: center;
+}
+
 .stat-circle { position: relative; width: 80px; height: 80px; }
 .circular-chart { display: block; margin: 0 auto; max-width: 100%; max-height: 100%; }
 .circle-bg { fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 3.8; }
 .circle { fill: none; stroke: var(--lvl-3); stroke-width: 2.8; stroke-linecap: round; }
 .stat-text { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.8rem; line-height: 1; }
 .stat-text strong { font-size: 1.2rem; font-weight: 800; }
+
+.progress-breakdown {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 16px;
+    padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stat-item {
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    padding: 16px; border-radius: 12px; background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1); transition: 0.3s;
+}
+
+.stat-item:hover { background: rgba(255, 255, 255, 0.08); transform: translateY(-2px); }
+
+.stat-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; opacity: 0.7; }
+.stat-value { font-size: 1.8rem; font-weight: 800; }
+
+.stat-not-understand { border-color: rgba(156, 163, 175, 0.3); }
+.stat-not-understand .stat-value { color: #d1d5db; }
+
+.stat-weak { border-color: rgba(239, 68, 68, 0.3); }
+.stat-weak .stat-value { color: #fecaca; }
+
+.stat-medium { border-color: rgba(245, 158, 11, 0.3); }
+.stat-medium .stat-value { color: #fed7aa; }
+
+.stat-understand { border-color: rgba(16, 174, 185, 0.3); }
+.stat-understand .stat-value { color: #a5f3fc; }
 
 /* --- QUESTIONS LIST (Zmienione z Grid) --- */
 .questions-list { 

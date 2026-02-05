@@ -54,6 +54,24 @@
                         </div>
                     </div>
                 </div>
+                <div class="progress-breakdown">
+                    <div class="stat-item stat-not-understand">
+                        <span class="stat-label">Nie umiem</span>
+                        <span class="stat-value">{{ statsPerLevel.notUnderstand }}</span>
+                    </div>
+                    <div class="stat-item stat-weak">
+                        <span class="stat-label">Słabo</span>
+                        <span class="stat-value">{{ statsPerLevel.weak }}</span>
+                    </div>
+                    <div class="stat-item stat-medium">
+                        <span class="stat-label">Średnio</span>
+                        <span class="stat-value">{{ statsPerLevel.medium }}</span>
+                    </div>
+                    <div class="stat-item stat-understand">
+                        <span class="stat-label">Umiem</span>
+                        <span class="stat-value">{{ statsPerLevel.understand }}</span>
+                    </div>
+                </div>
             </div>
 
             <div v-for="group in groupedQuestions" :key="group.name" class="chapter-container">
