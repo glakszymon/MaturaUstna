@@ -179,10 +179,9 @@ createApp({
             userProgress.value[id] = status;
             try {
                 await fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ user: username.value, id: id, status: status })
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ user: username.value, id: id, status: status })
                 });
             } catch (e) { console.error(e); }
         };
