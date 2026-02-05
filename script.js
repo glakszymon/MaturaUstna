@@ -1,82 +1,46 @@
+// Reusable header component
 const { createApp, ref, computed, onMounted } = Vue;
 
-// Reusable header component
+// Reusable header component z obsługą BURGERA
 const HeaderComponent = {
     props: ['username', 'isLoggedIn'],
     emits: ['go-home', 'draw-random', 'logout', 'edit-pattern'],
+    setup(props, { emit }) {
+        const isMenuOpen = ref(false);
+        const toggleMenu = () => { isMenuOpen.value = !isMenuOpen.value; };
+        const closeMenu = (action) => {
+            isMenuOpen.value = false;
+            emit(action);
+        };
+        return { isMenuOpen, toggleMenu, closeMenu };
+    },
     template: `
-    <header v-if="isLoggedIn" style="
-        display: flex; 
-        justify-content: space-between; 
-        align-items: center; 
-        padding: 1rem 2rem; 
-        background: #fff; 
-        border-bottom: 1px solid #e2e8f0;
-        position: sticky;
-        top: 0;
-        z-index: 1000;
-        font-family: sans-serif;
-        margin-bottom: 20px;
-    ">
-        <div style="display: flex; gap: 12px;">
-            <button @click="$emit('go-home')" style="
-                background: transparent; 
-                border: 1px solid var(--primary); 
-                color: var(--primary); 
-                padding: 10px 18px; 
-                border-radius: 8px; 
-                font-weight: 700; 
-                font-size: 0.85rem; 
-                cursor: pointer;
-                text-transform: uppercase;
-            ">Lista Tematów</button>
-
-            <button @click="$emit('draw-random')" style="
-                background: transparent; 
-                border: 1px solid var(--primary); 
-                color: var(--primary); 
-                padding: 10px 18px; 
-                border-radius: 8px; 
-                font-weight: 700; 
-                font-size: 0.85rem; 
-                cursor: pointer;
-                text-transform: uppercase;
-            ">Start Egzamin</button>
-
-            <button @click="$emit('edit-pattern')" style="
-                background: transparent; 
-                border: 1px solid var(--primary); 
-                color: var(--primary); 
-                padding: 10px 18px; 
-                border-radius: 8px; 
-                font-weight: 700; 
-                font-size: 0.85rem; 
-                cursor: pointer;
-                text-transform: uppercase;
-            ">Dodaj Odpowiedź</button>
-        </div>
-
-        <div style="display: flex; align-items: center; gap: 25px;">
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <span style="font-size: 1.8rem;">👤</span>
-                <span style="
-                    font-size: 1.5rem; 
-                    font-weight: 900; 
-                    color: var(--bg-dark); 
-                    letter-spacing: -1px;
-                ">{{ username }}</span>
+    <header v-if="isLoggedIn" class="main-header">
+        <div class="header-container">
+            <div class="brand-logo" @click="$emit('go-home')" style="cursor:pointer">
+                <span style="font-size: 1.5rem;">🎓</span>
+                <span class="brand-text">Matura<b>2026</b></span>
             </div>
-            
-            <button @click="$emit('logout')" style="
-                background: #fff1f2; 
-                color: #e11d48; 
-                border: 1px solid #fecdd3; 
-                padding: 6px 12px; 
-                border-radius: 6px; 
-                font-size: 0.75rem; 
-                font-weight: 800; 
-                cursor: pointer;
-            ">WYLOGUJ</button>
+
+            <button class="burger-btn" :class="{ 'is-open': isMenuOpen }" @click="toggleMenu">
+                <span></span><span></span><span></span>
+            </button>
+
+            <div class="nav-menu" :class="{ 'is-active': isMenuOpen }">
+                <div class="nav-links">
+                    <button @click="closeMenu('go-home')" class="nav-btn">Lista Tematów</button>
+                    <button @click="closeMenu('draw-random')" class="nav-btn">Start Egzamin</button>
+                    <button @click="closeMenu('edit-pattern')" class="nav-btn">Dodaj Odpowiedź</button>
+                </div>
+
+                <div class="user-section">
+                    <div class="user-info">
+                        <span class="user-avatar">👤</span>
+                        <span class="user-name">{{ username }}</span>
+                    </div>
+                    <button @click="closeMenu('logout')" class="logout-btn">WYLOGUJ</button>
+                </div>
+            </div>
         </div>
     </header>
     `
@@ -86,6 +50,7 @@ const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxGyupicyj0vj
 
 const app = createApp({ components: { 'app-header': HeaderComponent },
     setup() {
+        const isMenuOpen = ref(false);
         // --- DATA ---
         const question_list = ref([]);
         const answer_database = ref([]);
@@ -363,7 +328,7 @@ const app = createApp({ components: { 'app-header': HeaderComponent },
             getStatus, hasAnswer, updateStatus, progressCount, statsPerLevel, isLoading,
             currentQuestion, currentPattern, form, checkMode,
             enableCheckMode, gradeScale, grades, setGrade, totalScore,
-            comparisonStructure
+            comparisonStructure, isMenuOpen
         };
     }
 });
