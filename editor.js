@@ -1,5 +1,7 @@
 const { createApp, ref, reactive, onMounted, watch } = Vue;
 
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxbe8-tcrJ4h2z5QNLEe5m8kjD2WQvH9OoZknZ7TIp0VSvM94nhNvshfiTK1E7xTwJJ/exec';
+
 const app = createApp({
     template: `
         <div class="editor-container">
@@ -130,7 +132,6 @@ const app = createApp({
             };
 
             try {
-                const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxbe8-tcrJ4h2z5QNLEe5m8kjD2WQvH9OoZknZ7TIp0VSvM94nhNvshfiTK1E7xTwJJ/exec';
                 const response = await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
                     headers: {
@@ -168,7 +169,6 @@ const app = createApp({
 
         const reloadAnswerDatabase = async () => {
             try {
-                const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxbe8-tcrJ4h2z5QNLEe5m8kjD2WQvH9OoZknZ7TIp0VSvM94nhNvshfiTK1E7xTwJJ/exec';
                 const response = await fetch(GOOGLE_SCRIPT_URL);
                 const text = await response.text();
                 const data = JSON.parse(text);
