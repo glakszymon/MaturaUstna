@@ -4,7 +4,83 @@ const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxGyupicyj0vj
 
 const app = createApp({
     template: `
-        <div class="editor-container">
+        <div>
+            <header style="
+                display: flex; 
+                justify-content: space-between; 
+                align-items: center; 
+                padding: 1rem 2rem; 
+                background: #fff; 
+                border-bottom: 1px solid #e2e8f0;
+                position: sticky;
+                top: 0;
+                z-index: 1000;
+                font-family: sans-serif;
+                margin-bottom: 20px;
+            ">
+                <div style="display: flex; gap: 12px;">
+                    <button @click="goHome" style="
+                        background: transparent; 
+                        border: 1px solid var(--primary); 
+                        color: var(--primary); 
+                        padding: 10px 18px; 
+                        border-radius: 8px; 
+                        font-weight: 700; 
+                        font-size: 0.85rem; 
+                        cursor: pointer;
+                        text-transform: uppercase;
+                    ">Lista Tematów</button>
+
+                    <button @click="goToExamRandom" style="
+                        background: transparent; 
+                        border: 1px solid var(--primary); 
+                        color: var(--primary); 
+                        padding: 10px 18px; 
+                        border-radius: 8px; 
+                        font-weight: 700; 
+                        font-size: 0.85rem; 
+                        cursor: pointer;
+                        text-transform: uppercase;
+                    ">Start Egzamin</button>
+
+                    <button @click="$event => {}" style="
+                        background: transparent; 
+                        border: 1px solid var(--primary); 
+                        color: var(--primary); 
+                        padding: 10px 18px; 
+                        border-radius: 8px; 
+                        font-weight: 700; 
+                        font-size: 0.85rem; 
+                        cursor: pointer;
+                        text-transform: uppercase;
+                    ">Dodaj Odpowiedź</button>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 25px;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span style="font-size: 1.8rem;">👤</span>
+                        <span style="
+                            font-size: 1.5rem; 
+                            font-weight: 900; 
+                            color: var(--bg-dark); 
+                            letter-spacing: -1px;
+                        ">Użytkownik</span>
+                    </div>
+                    
+                    <button @click="logout" style="
+                        background: #fff1f2; 
+                        color: #e11d48; 
+                        border: 1px solid #fecdd3; 
+                        padding: 6px 12px; 
+                        border-radius: 6px; 
+                        font-size: 0.75rem; 
+                        font-weight: 800; 
+                        cursor: pointer;
+                    ">WYLOGUJ</button>
+                </div>
+            </header>
+
+            <div class="editor-container">
             <div class="editor-header">
                 <h1>✏️ Dodaj Odpowiedź</h1>
                 <p class="subtitle">Uzupełnij bazę wzorców odpowiedzi</p>
@@ -102,6 +178,11 @@ const app = createApp({
         const successMessage = ref('');
         const errorMessage = ref('');
         
+        // Nawigacja
+        const goHome = () => { window.location.href = 'index.html'; };
+        const goToExamRandom = () => { localStorage.setItem('current_exam_id', 'random'); window.location.href = 'egzamin.html'; };
+        const logout = () => { window.location.href = 'index.html'; };
+        
         const formData = reactive({
             wstep: '', teza: '', arg1_tytul: '', arg1_rozwiniecie: '', 
             arg1_przyklad: '', arg1_wniosek: '', arg2_tytul: '', 
@@ -198,8 +279,8 @@ const app = createApp({
 
         onMounted(loadData);
 
-        return { questionList, selectedQuestionId, formData, successMessage, errorMessage, saveAnswer, resetForm };
+        return { questionList, selectedQuestionId, formData, successMessage, errorMessage, saveAnswer, resetForm, goHome, goToExamRandom, logout };
     }
 });
 
-app.mount('.container');
+app.mount('#app');

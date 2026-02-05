@@ -14,7 +14,7 @@
     <div v-if="isLoading" class="loading-screen"><div class="spinner"></div><p>Ładowanie wzorca...</p></div>
 
     <div v-if="isLoggedIn && currentPattern" class="app-wrapper">
-        <app-header :username="username" :is-logged-in="isLoggedIn" :back="true" :title="`Wzorzec Odpowiedzi #${currentPattern.id}`" @go-home="goHome" @draw-random="drawRandomQuestion" @logout="logout"></app-header>
+        <app-header :username="username" :is-logged-in="isLoggedIn" :show-logo="true" @go-home="goHome" @draw-random="goToExamRandom" @logout="logout" @edit-pattern="goToEditor"></app-header>
 
         <main class="content" style="max-width: 800px; margin: 0 auto;">
             <div class="modal-body custom-scrollbar glass-panel" style="padding: 40px;">

@@ -14,7 +14,7 @@
     <div v-if="isLoading" class="loading-screen"><div class="spinner"></div><p>Ładowanie...</p></div>
 
     <div v-if="isLoggedIn && currentQuestion" class="app-wrapper">
-        <app-header :username="username" :is-logged-in="isLoggedIn" :back="true" @go-home="goHome" @draw-random="drawRandomQuestion" @logout="logout"></app-header>
+        <app-header :username="username" :is-logged-in="isLoggedIn" :back="true" @go-home="goHome" @draw-random="drawRandomQuestion" @logout="logout" @edit-pattern="goToEditor"></app-header>
 
         <main class="content">
             <div class="workspace">

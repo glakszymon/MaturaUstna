@@ -34,7 +34,7 @@
     </div>
 
     <div v-if="isLoggedIn" class="app-wrapper">
-        <app-header :username="username" :is-logged-in="isLoggedIn" :show-logo="true" @draw-random="goToExamRandom" @logout="logout"></app-header>
+        <app-header :username="username" :is-logged-in="isLoggedIn" :show-logo="true" @draw-random="goToExamRandom" @logout="logout" @edit-pattern="goToEditor" @go-home="goHome"></app-header>
 
         <main class="content">
             <div class="dashboard-hero">
@@ -75,6 +75,11 @@
                             </div>
                             
                             <h3 class="q-title" @click="goToExam(q.id)">{{ q.pytanie }}</h3>
+
+                            <div v-if="!hasAnswer(q.id)" class="no-answer-warning">
+                                <span class="warning-icon">⚠️</span>
+                                <span class="warning-text">Brak konspektu</span>
+                            </div>
 
                             <div class="mastery-control">
                                 <div class="slider-labels">

@@ -547,3 +547,25 @@ ALe zróbmy zmiane
     min-height: 80px;
   }
 }
+
+/* --- WARNING: No Answer/Pattern --- */
+.no-answer-warning {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fef3c7;
+  border: 1px solid #fcd34d;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin: 12px 0;
+  font-size: 0.9rem;
+  color: #78350f;
+}
+
+.no-answer-warning .warning-icon {
+  font-size: 1rem;
+}
+
+.no-answer-warning .warning-text {
+  font-weight: 600;
+}

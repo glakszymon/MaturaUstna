@@ -2,33 +2,81 @@ const { createApp, ref, computed, onMounted } = Vue;
 
 // Reusable header component
 const HeaderComponent = {
-    props: {
-        username: { type: String, default: '' },
-        isLoggedIn: { type: Boolean, default: false },
-        back: { type: Boolean, default: false },
-        title: { type: String, default: '' },
-        showLogo: { type: Boolean, default: true }
-    },
-    emits: ['go-home', 'draw-random', 'logout'],
+    props: ['username', 'isLoggedIn'],
+    emits: ['go-home', 'draw-random', 'logout', 'edit-pattern'],
     template: `
-    <header class="glass-header">
-        <div class="brand">
-            <button v-if="back" @click="$emit('go-home')" class="btn-back-header">← Wróć do listy</button>
-            <template v-else>
-                <div v-if="showLogo" class="logo-circle"></div>
-                <h1 v-if="showLogo">Matura Ustna <span>2026</span></h1>
-            </template>
+    <header v-if="isLoggedIn" style="
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+        padding: 1rem 2rem; 
+        background: #fff; 
+        border-bottom: 1px solid #e2e8f0;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        font-family: sans-serif;
+        margin-bottom: 20px;
+    ">
+        <div style="display: flex; gap: 12px;">
+            <button @click="$emit('go-home')" style="
+                background: transparent; 
+                border: 1px solid var(--primary); 
+                color: var(--primary); 
+                padding: 10px 18px; 
+                border-radius: 8px; 
+                font-weight: 700; 
+                font-size: 0.85rem; 
+                cursor: pointer;
+                text-transform: uppercase;
+            ">Lista Tematów</button>
+
+            <button @click="$emit('draw-random')" style="
+                background: transparent; 
+                border: 1px solid var(--primary); 
+                color: var(--primary); 
+                padding: 10px 18px; 
+                border-radius: 8px; 
+                font-weight: 700; 
+                font-size: 0.85rem; 
+                cursor: pointer;
+                text-transform: uppercase;
+            ">Start Egzamin</button>
+
+            <button @click="$emit('edit-pattern')" style="
+                background: transparent; 
+                border: 1px solid var(--primary); 
+                color: var(--primary); 
+                padding: 10px 18px; 
+                border-radius: 8px; 
+                font-weight: 700; 
+                font-size: 0.85rem; 
+                cursor: pointer;
+                text-transform: uppercase;
+            ">Dodaj Odpowiedź</button>
         </div>
 
-        <div v-if="title" class="brand"><h1 v-html="title"></h1></div>
-
-        <div class="header-right">
-            <button class="btn-random" title="Wylosuj zadanie" @click="$emit('draw-random')">🎲</button>
-            <div class="user-pill">
-                <span class="avatar">👤</span>
-                <span class="username">{{ username }}</span>
-                <button v-if="isLoggedIn" @click="$emit('logout')" class="btn-icon-logout" title="Wyloguj">✕</button>
+        <div style="display: flex; align-items: center; gap: 25px;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="font-size: 1.8rem;">👤</span>
+                <span style="
+                    font-size: 1.5rem; 
+                    font-weight: 900; 
+                    color: var(--bg-dark); 
+                    letter-spacing: -1px;
+                ">{{ username }}</span>
             </div>
+            
+            <button @click="$emit('logout')" style="
+                background: #fff1f2; 
+                color: #e11d48; 
+                border: 1px solid #fecdd3; 
+                padding: 6px 12px; 
+                border-radius: 6px; 
+                font-size: 0.75rem; 
+                font-weight: 800; 
+                cursor: pointer;
+            ">WYLOGUJ</button>
         </div>
     </header>
     `
@@ -198,6 +246,7 @@ const app = createApp({ components: { 'app-header': HeaderComponent },
         const goToExam = (id) => { localStorage.setItem('current_exam_id', id); window.location.href = 'egzamin.html'; };
         const goToExamRandom = () => { localStorage.setItem('current_exam_id', 'random'); window.location.href = 'egzamin.html'; };
         const goToPattern = (id) => { localStorage.setItem('current_pattern_id', id); window.location.href = 'wzorzec.html'; };
+        const goToEditor = () => { window.location.href = 'editor.html'; };
 
         const drawRandomQuestion = () => {
             if (question_list.value.length === 0) return;
@@ -209,15 +258,38 @@ const app = createApp({ components: { 'app-header': HeaderComponent },
 
         const getStatus = (id) => (userProgress.value[id] !== undefined ? Number(userProgress.value[id]) : 0);
         
+        const hasAnswer = (id) => {
+            const answerRecord = answer_database.value.find(a => Number(a.id) === Number(id));
+            if (!answerRecord) return false;
+            
+            // Sprawdzamy czy przynajmniej jedno pole odpowiedzi ma wartość
+            const answerFields = [
+                'wstep', 'teza', 'arg1_tytul', 'arg1_rozwiniecie', 'arg1_przyklad', 'arg1_wniosek',
+                'arg2_tytul', 'arg2_rozwiniecie', 'arg2_przyklad', 'arg2_wniosek', 'kontekst', 'podsumowanie'
+            ];
+            
+            return answerFields.some(field => answerRecord[field] && String(answerRecord[field]).trim() !== '');
+        };
+        
         const updateStatus = async (id, status) => {
             userProgress.value[id] = status;
             try {
+                // Wysyłamy jako text/plain, aby uniknąć zapytania OPTIONS (CORS preflight)
                 await fetch(GOOGLE_SCRIPT_URL, {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ user: username.value, id: id, status: status })
+                    method: 'POST',
+                    mode: 'no-cors', // Google i tak przekierowuje, więc no-cors jest tu bezpieczniejszy przy POST
+                    headers: { 
+                        'Content-Type': 'text/plain' 
+                    },
+                    body: JSON.stringify({ 
+                        user: username.value, 
+                        id: id, 
+                        status: status 
+                    })
                 });
-            } catch (e) { console.error(e); }
+            } catch (e) { 
+                console.error("Błąd podczas aktualizacji statusu:", e); 
+            }
         };
 
         const progressCount = computed(() => {
@@ -266,8 +338,8 @@ const app = createApp({ components: { 'app-header': HeaderComponent },
         return {
             groupedQuestions,
             question_list, answer_database, isLoggedIn, username, usernameInput, loginError,
-            login, logout, goHome, goToExam, goToExamRandom, goToPattern, drawRandomQuestion,
-            getStatus, updateStatus, progressCount, isLoading,
+            login, logout, goHome, goToExam, goToExamRandom, goToPattern, goToEditor, drawRandomQuestion,
+            getStatus, hasAnswer, updateStatus, progressCount, isLoading,
             currentQuestion, currentPattern, form, checkMode,
             enableCheckMode, gradeScale, grades, setGrade, totalScore,
             comparisonStructure

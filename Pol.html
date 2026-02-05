@@ -41,7 +41,7 @@
     </div>
 
     <div v-if="isLoggedIn" class="app-wrapper">
-        <app-header :username="username" :is-logged-in="isLoggedIn" :show-logo="true" @draw-random="drawQuestion" @logout="logout"></app-header>
+        <app-header :username="username" :is-logged-in="isLoggedIn" :show-logo="true" @draw-random="goToExamRandom" @logout="logout" @edit-pattern="goToEditor"></app-header>
 
         <main class="content">
             <transition name="fade" mode="out-in">
