@@ -600,3 +600,109 @@ ALe zróbmy zmiane
 .no-answer-warning .warning-text {
   font-weight: 600;
 }
+
+
+/* --- ZAAWANSOWANA RESPONSYWNOŚĆ --- */
+
+/* Dla tabletów i dużych telefonów (poniżej 900px) */
+@media (max-width: 900px) {
+    .app-wrapper {
+        padding: 10px;
+    }
+
+    .glass-header {
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px;
+        top: 10px;
+        align-items: stretch;
+    }
+
+    .header-right {
+        flex-direction: column;
+        gap: 12px;
+        width: 100%;
+    }
+
+    .main-tabs {
+        width: 100%;
+        justify-content: center;
+        display: flex;
+    }
+
+    .user-pill {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .dashboard-hero {
+        flex-direction: column;
+        text-align: center;
+        padding: 25px 20px;
+        gap: 20px;
+    }
+
+    /* Naprawa siatki pytań, aby karty nie wychodziły poza ekran */
+    .questions-grid {
+        grid-template-columns: 1fr; 
+    }
+
+    /* Układanie edytora i porównania pionowo */
+    .editor-grid, 
+    .comparison-columns,
+    .comparison-row {
+        grid-template-columns: 1fr !important;
+        gap: 15px;
+    }
+}
+
+/* Specjalne poprawki dla małych telefonów (poniżej 480px) */
+@media (max-width: 480px) {
+    .brand h1 {
+        font-size: 1.2rem;
+    }
+    
+    .brand h1 span {
+        display: none; /* Ukrywa "2026" dla oszczędności miejsca */
+    }
+
+    .hero-content h2 {
+        font-size: 1.4rem;
+    }
+
+    .glass-panel {
+        padding: 15px !important;
+        border-radius: 15px;
+    }
+
+    /* Powiększenie pól tekstowych dla łatwiejszego pisania kciukami */
+    textarea {
+        font-size: 16px !important; /* Zapobiega auto-zoomowi na iOS */
+        min-height: 120px;
+    }
+
+    /* Poprawa widoku porównania ocen */
+    .comp-item {
+        flex-direction: column;
+        align-items: stretch !important;
+        gap: 10px;
+    }
+
+    .grade-selector {
+        width: 100%;
+        justify-content: space-between;
+        margin-top: 5px;
+    }
+
+    .g-btn {
+        flex: 1;
+        padding: 10px 5px;
+    }
+    
+    /* Przyciski akcji na dole ekranu */
+    .floating-action {
+        position: sticky;
+        bottom: 10px;
+        padding: 0;
+    }
+}
