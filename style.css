@@ -99,13 +99,21 @@ body {
 
 /* --- DASHBOARD HERO --- */
 .dashboard-hero {
-    display: flex; gap: 50px; align-items: center; justify-content: center;
+    display: flex; gap: 50px; align-items: flex-start; justify-content: space-between;
     background: var(--bg-dark); color: white; padding: 32px 40px;
     border-radius: 16px; margin-bottom: 40px; position: relative; overflow: hidden;
 }
 
+.progress-breakdown-section {
+    flex: 1;
+}
+
+.section-title {
+    margin: 0 0 20px; font-size: 1rem; font-weight: 600; opacity: 0.8;
+}
+
 .progress-stats {
-    display: flex; align-items: center;
+    display: flex; align-items: center; justify-content: flex-end;
 }
 
 .stat-circle { position: relative; width: 120px; height: 120px; }
@@ -113,7 +121,7 @@ body {
 .circle-bg { fill: none; stroke: rgba(255,255,255,0.08); stroke-width: 3.8; }
 .circle { fill: none; stroke: var(--lvl-3); stroke-width: 2.8; stroke-linecap: round; }
 .stat-text { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.85rem; line-height: 1; }
-.stat-text strong { font-size: 1.4rem; font-weight: 700; }
+.stat-text strong { font-size: 1.8rem; font-weight: 700; }
 
 .progress-breakdown {
     display: flex; gap: 16px;
