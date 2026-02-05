@@ -58,54 +58,42 @@
 
         <main class="content">
             <div class="dashboard-hero">
-                <div class="hero-content">
-                    <h2>Twoje Postępy</h2>
-                    <p>Monitoruj stopień opanowania materiału.</p>
                 </div>
-                <div class="progress-stats">
-                    <div class="stat-circle">
-                        <svg viewBox="0 0 36 36" class="circular-chart">
-                            <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                            <path class="circle" :stroke-dasharray="Math.round((progressCount / (question_list.length || 1)) * 100) + ', 100'" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                        </svg>
-                        <div class="stat-text">
-                            <strong>{{ progressCount }}</strong>
-                            <span>/ {{ question_list.length }}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <div class="questions-list">
-                <div v-for="q in question_list" :key="q.id">
-                    <div class="question-card glass-panel" :class="'status-border-' + getStatus(q.id)">
-                        <div class="qc-header">
-                            <span class="q-badge">Pytanie #{{ q.id }}</span>
-                            <div class="qc-actions">
-                                <button class="btn-small btn-outline" @click="goToPattern(q.id)">
-                                    📖 Wzorzec
-                                </button>
-                                <button class="btn-small" @click="goToExam(q.id)">
-                                    Ćwicz to →
-                                </button>
+            <div v-for="group in groupedQuestions" :key="group.name" class="chapter-container">
+                <h2 class="chapter-header">{{ group.name }}</h2>
+                
+                <div class="questions-list">
+                    <div v-for="q in group.questions" :key="q.id">
+                        <div class="question-card glass-panel" :class="'status-border-' + getStatus(q.id)">
+                            <div class="qc-header">
+                                <span class="q-badge">Pytanie #{{ q.id }}</span>
+                                <div class="qc-actions">
+                                    <button class="btn-small btn-outline" @click="goToPattern(q.id)">
+                                        📖 Wzorzec
+                                    </button>
+                                    <button class="btn-small" @click="goToExam(q.id)">
+                                        Ćwicz to →
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                        
-                        <h3 class="q-title" @click="goToExam(q.id)">{{ q.pytanie }}</h3>
+                            
+                            <h3 class="q-title" @click="goToExam(q.id)">{{ q.pytanie }}</h3>
 
-                        <div class="mastery-control">
-                            <div class="slider-labels">
-                                <span :class="{ active: getStatus(q.id) == 0 }">Nie umiem</span>
-                                <span :class="{ active: getStatus(q.id) == 1 }">Słabo</span>
-                                <span :class="{ active: getStatus(q.id) == 2 }">Średnio</span>
-                                <span :class="{ active: getStatus(q.id) == 3 }">Umiem</span>
-                            </div>
-                            <div class="range-wrapper">
-                                <input type="range" min="0" max="3" step="1" 
-                                    :value="getStatus(q.id)" 
-                                    @input="updateStatus(q.id, $event.target.value)"
-                                    class="mastery-slider"
-                                    :class="'val-' + getStatus(q.id)">
+                            <div class="mastery-control">
+                                <div class="slider-labels">
+                                    <span :class="{ active: getStatus(q.id) == 0 }">Nie umiem</span>
+                                    <span :class="{ active: getStatus(q.id) == 1 }">Słabo</span>
+                                    <span :class="{ active: getStatus(q.id) == 2 }">Średnio</span>
+                                    <span :class="{ active: getStatus(q.id) == 3 }">Umiem</span>
+                                </div>
+                                <div class="range-wrapper">
+                                    <input type="range" min="0" max="3" step="1" 
+                                        :value="getStatus(q.id)" 
+                                        @input="updateStatus(q.id, $event.target.value)"
+                                        class="mastery-slider"
+                                        :class="'val-' + getStatus(q.id)">
+                                </div>
                             </div>
                         </div>
                     </div>

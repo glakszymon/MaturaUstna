@@ -253,3 +253,33 @@ body {
 /* 
 ALe zróbmy zmiane
  */
+
+ /* --- ROZDZIAŁY --- */
+.chapter-container {
+    margin-bottom: 50px; /* Odstęp między rozdziałami */
+}
+
+.chapter-header {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--bg-dark);
+    margin-bottom: 20px;
+    padding-left: 10px;
+    border-left: 4px solid var(--primary); /* Pionowa kreska w kolorze głównym */
+    display: flex;
+    align-items: center;
+}
+
+/* Opcjonalnie: dodaj subtelne tło pod nagłówek, jeśli chcesz, by bardziej się wyróżniał */
+.chapter-header {
+    background: linear-gradient(to right, rgba(79, 70, 229, 0.1), transparent);
+    padding: 10px 15px;
+    border-radius: 8px 0 0 8px;
+}
+
+/* Zachowujemy style listy z poprzedniej wersji */
+.questions-list { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 16px; 
+}

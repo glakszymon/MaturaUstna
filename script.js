@@ -209,8 +209,29 @@ createApp({
         });
 
         onMounted(fetchData);
+        // ... istniejące refy (question_list, itp.)
 
+        const groupedQuestions = computed(() => {
+            const groups = {};
+            question_list.value.forEach(q => {
+                // Jeśli pole 'rozdzial' jest puste, przypisz do "Inne"
+                const chapterName = q.rozdzial || 'Pozostałe';
+                if (!groups[chapterName]) {
+                    groups[chapterName] = [];
+                }
+                groups[chapterName].push(q);
+            });
+            
+            // Zwracamy tablicę obiektów, aby łatwo iterować w HTML
+            return Object.keys(groups).map(name => ({
+                name: name,
+                questions: groups[name]
+            }));
+        });
+
+        // Pamiętaj, aby dodać 'groupedQuestions' do zwracanego obiektu na końcu setup():
         return {
+            groupedQuestions, // <--- to dodaj
             question_list, answer_database, isLoggedIn, username, usernameInput, loginError,
             login, logout, goHome, goToExam, goToExamRandom, goToPattern,
             getStatus, updateStatus, progressCount, isLoading,
