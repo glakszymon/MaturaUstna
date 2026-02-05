@@ -33,6 +33,8 @@ body {
     background-attachment: fixed;
     color: var(--text-main);
     min-height: 100vh;
+    transform: scale(0.7);
+    transform-origin: top center;
 }
 
 .app-wrapper {
