@@ -298,6 +298,27 @@ const app = createApp({ components: { 'app-header': HeaderComponent },
             return count;
         });
 
+        const statsPerLevel = computed(() => {
+            const stats = {
+                notUnderstand: 0,  // "Nie umiem" (0)
+                weak: 0,           // "Słabo" (1)
+                medium: 0,         // "Średnio" (2)
+                understand: 0      // "Umiem" (3)
+            };
+            
+            question_list.value.forEach(q => {
+                const status = getStatus(q.id);
+                switch(status) {
+                    case 0: stats.notUnderstand++; break;
+                    case 1: stats.weak++; break;
+                    case 2: stats.medium++; break;
+                    case 3: stats.understand++; break;
+                }
+            });
+            
+            return stats;
+        });
+
         // --- EXAM LOGIC ---
         const enableCheckMode = () => { 
             checkMode.value = true; 
@@ -339,7 +360,7 @@ const app = createApp({ components: { 'app-header': HeaderComponent },
             groupedQuestions,
             question_list, answer_database, isLoggedIn, username, usernameInput, loginError,
             login, logout, goHome, goToExam, goToExamRandom, goToPattern, goToEditor, drawRandomQuestion,
-            getStatus, hasAnswer, updateStatus, progressCount, isLoading,
+            getStatus, hasAnswer, updateStatus, progressCount, statsPerLevel, isLoading,
             currentQuestion, currentPattern, form, checkMode,
             enableCheckMode, gradeScale, grades, setGrade, totalScore,
             comparisonStructure
