@@ -41,29 +41,7 @@
     </div>
 
     <div v-if="isLoggedIn" class="app-wrapper">
-        <header class="glass-header">
-            <div class="brand">
-                <div class="logo-circle"></div>
-                <h1>Matura Ustna <span>2026</span></h1>
-            </div>
-            
-            <div class="header-right">
-                <nav class="main-tabs">
-                    <button @click="switchTab('list')" :class="{ active: currentTab === 'list' }">
-                        <span class="icon">📋</span> Baza pytań
-                    </button>
-                    <button @click="switchTab('draw')" :class="{ active: currentTab === 'draw' }">
-                        <span class="icon">🎲</span> Trening
-                    </button>
-                </nav>
-                
-                <div class="user-pill">
-                    <span class="avatar">👤</span>
-                    <span class="username">{{ username }}</span>
-                    <button @click="logout" class="btn-icon-logout" title="Wyloguj">✕</button>
-                </div>
-            </div>
-        </header>
+        <app-header :username="username" :is-logged-in="isLoggedIn" :show-logo="true" @draw-random="drawQuestion" @logout="logout"></app-header>
 
         <main class="content">
             <transition name="fade" mode="out-in">
@@ -346,9 +324,43 @@
 <script>
 const { createApp, ref, computed, onMounted } = Vue;
 
+// Header component (shared)
+const HeaderComponent = {
+    props: {
+        username: { type: String, default: '' },
+        isLoggedIn: { type: Boolean, default: false },
+        back: { type: Boolean, default: false },
+        title: { type: String, default: '' },
+        showLogo: { type: Boolean, default: true }
+    },
+    emits: ['go-home', 'draw-random', 'logout'],
+    template: `
+    <header class="glass-header">
+        <div class="brand">
+            <button v-if="back" @click="$emit('go-home')" class="btn-back-header">← Wróć do listy</button>
+            <template v-else>
+                <div v-if="showLogo" class="logo-circle"></div>
+                <h1 v-if="showLogo">Matura Ustna <span>2026</span></h1>
+            </template>
+        </div>
+
+        <div v-if="title" class="brand"><h1 v-html="title"></h1></div>
+
+        <div class="header-right">
+            <button class="btn-random" title="Wylosuj zadanie" @click="$emit('draw-random')">🎲</button>
+            <div class="user-pill">
+                <span class="avatar">👤</span>
+                <span class="username">{{ username }}</span>
+                <button v-if="isLoggedIn" @click="$emit('logout')" class="btn-icon-logout" title="Wyloguj">✕</button>
+            </div>
+        </div>
+    </header>
+    `
+};
+
 const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyMfloS94ZOdJ49Z5LFU6N2UmabTXF6Wop1_jMLJ-RvQH_0Gk6gD6wgE9ZqoYPCpHpk/exec';
 
-createApp({
+createApp({ components: { 'app-header': HeaderComponent },
     setup() {
         const question_list = ref([]);
         const answer_database = ref([]);

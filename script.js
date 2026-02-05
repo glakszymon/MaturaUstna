@@ -1,8 +1,42 @@
 const { createApp, ref, computed, onMounted } = Vue;
 
+// Reusable header component
+const HeaderComponent = {
+    props: {
+        username: { type: String, default: '' },
+        isLoggedIn: { type: Boolean, default: false },
+        back: { type: Boolean, default: false },
+        title: { type: String, default: '' },
+        showLogo: { type: Boolean, default: true }
+    },
+    emits: ['go-home', 'draw-random', 'logout'],
+    template: `
+    <header class="glass-header">
+        <div class="brand">
+            <button v-if="back" @click="$emit('go-home')" class="btn-back-header">← Wróć do listy</button>
+            <template v-else>
+                <div v-if="showLogo" class="logo-circle"></div>
+                <h1 v-if="showLogo">Matura Ustna <span>2026</span></h1>
+            </template>
+        </div>
+
+        <div v-if="title" class="brand"><h1 v-html="title"></h1></div>
+
+        <div class="header-right">
+            <button class="btn-random" title="Wylosuj zadanie" @click="$emit('draw-random')">🎲</button>
+            <div class="user-pill">
+                <span class="avatar">👤</span>
+                <span class="username">{{ username }}</span>
+                <button v-if="isLoggedIn" @click="$emit('logout')" class="btn-icon-logout" title="Wyloguj">✕</button>
+            </div>
+        </div>
+    </header>
+    `
+};
+
 const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxGyupicyj0vjiKjRprtPgpAzmEWEVTi6t4o3i7Sc_2gm5Mx5lB_0OWvH3SEEj6CN9S/exec';
 
-createApp({
+const app = createApp({ components: { 'app-header': HeaderComponent },
     setup() {
         // --- DATA ---
         const question_list = ref([]);
@@ -239,4 +273,6 @@ createApp({
             comparisonStructure
         };
     }
-}).mount('#app');
+});
+
+app.mount('#app');

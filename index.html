@@ -34,27 +34,7 @@
     </div>
 
     <div v-if="isLoggedIn" class="app-wrapper">
-        <header class="glass-header">
-            <div class="brand">
-                <div class="logo-circle"></div>
-                <h1>Matura Ustna <span>2026</span></h1>
-            </div>
-            <div class="header-right">
-                <nav class="main-tabs">
-                    <button class="active">
-                        <span class="icon">📋</span> Baza pytań
-                    </button>
-                    <button @click="goToExamRandom">
-                        <span class="icon">🎲</span> Trening
-                    </button>
-                </nav>
-                <div class="user-pill">
-                    <span class="avatar">👤</span>
-                    <span class="username">{{ username }}</span>
-                    <button @click="logout" class="btn-icon-logout" title="Wyloguj">✕</button>
-                </div>
-            </div>
-        </header>
+        <app-header :username="username" :is-logged-in="isLoggedIn" :show-logo="true" @draw-random="goToExamRandom" @logout="logout"></app-header>
 
         <main class="content">
             <div class="dashboard-hero">

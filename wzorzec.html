@@ -14,17 +14,7 @@
     <div v-if="isLoading" class="loading-screen"><div class="spinner"></div><p>Ładowanie wzorca...</p></div>
 
     <div v-if="isLoggedIn && currentPattern" class="app-wrapper">
-        <header class="glass-header">
-            <div class="brand">
-                <button @click="goHome" class="btn-back-header">← Wróć do listy</button>
-            </div>
-            <div class="brand">
-                <h1>Wzorzec Odpowiedzi <span>#{{ currentPattern.id }}</span></h1>
-            </div>
-            <div class="user-pill">
-                <span class="avatar">👤</span> {{ username }}
-            </div>
-        </header>
+        <app-header :username="username" :is-logged-in="isLoggedIn" :back="true" :title="`Wzorzec Odpowiedzi #${currentPattern.id}`" @go-home="goHome" @draw-random="drawRandomQuestion" @logout="logout"></app-header>
 
         <main class="content" style="max-width: 800px; margin: 0 auto;">
             <div class="modal-body custom-scrollbar glass-panel" style="padding: 40px;">

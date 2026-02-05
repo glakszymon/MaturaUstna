@@ -14,15 +14,7 @@
     <div v-if="isLoading" class="loading-screen"><div class="spinner"></div><p>Ładowanie...</p></div>
 
     <div v-if="isLoggedIn && currentQuestion" class="app-wrapper">
-        <header class="glass-header">
-            <div class="brand">
-                <button @click="goHome" class="btn-back-header">← Wróć do listy</button>
-                <button @click="drawRandomQuestion" class="btn-random">🎲 Wylosuj zadanie</button>
-            </div>
-            <div class="user-pill">
-                <span class="avatar">👤</span> {{ username }}
-            </div>
-        </header>
+        <app-header :username="username" :is-logged-in="isLoggedIn" :back="true" @go-home="goHome" @draw-random="drawRandomQuestion" @logout="logout"></app-header>
 
         <main class="content">
             <div class="workspace">
