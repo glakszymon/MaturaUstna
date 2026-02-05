@@ -55,8 +55,8 @@ body {
 
 /* --- LOGIN --- */
 .login-overlay {
-    position: fixed; inset: 0; background: rgba(15, 23, 42, 0.7);
-    backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center; z-index: 999;
+    position: fixed; inset: -25rem; background: rgba(15, 23, 42, 0.7);
+    display: flex; justify-content: center; align-items: center; z-index: 999;
 }
 .login-card { padding: 40px; width: 100%; max-width: 420px; text-align: center; }
 .login-icon { font-size: 3rem; display: block; margin-bottom: 10px; }
