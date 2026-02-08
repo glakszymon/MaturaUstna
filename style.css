@@ -900,3 +900,43 @@ ALe zróbmy zmiane
     .burger-btn { display: none; }
 }
 
+/* --- WORKFLOW STATUS BADGE --- */
+.workflow-badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.2s ease;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.workflow-badge:hover {
+    transform: translateY(-1px);
+    filter: brightness(0.95);
+}
+
+/* Stan: Do napisania (0) */
+.wf-status-0 {
+    background: #f1f5f9;
+    color: #64748b;
+    border: 1px solid #cbd5e1;
+}
+
+/* Stan: Czeka na sprawdzenie (1) */
+.wf-status-1 {
+    background: #ffedd5;
+    color: #c2410c;
+    border: 1px solid #fdba74;
+}
+
+/* Stan: Sprawdzone (2) */
+.wf-status-2 {
+    background: #dcfce7;
+    color: #15803d;
+    border: 1px solid #86efac;
+}

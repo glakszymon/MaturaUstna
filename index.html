@@ -83,10 +83,20 @@
                     <div v-for="q in group.questions" :key="q.id">
                         <div class="question-card glass-panel" :class="'status-border-' + getStatus(q.id)">
                             <div class="qc-header">
-                                <span class="q-badge">Pytanie #{{ q.id }}</span>
+                                <div style="display: flex; flex-direction: column; gap: 5px;">
+                                    <span class="q-badge">Pytanie #{{ q.id }}</span>
+                                    
+                                    <div class="workflow-badge" 
+                                        :class="getWorkflowDef(q.id).class" 
+                                        @click.stop="cycleWorkflowStatus(q.id)"
+                                        title="Kliknij, aby zmienić status">
+                                        {{ getWorkflowDef(q.id).label }}
+                                    </div>
+                                </div>
+
                                 <div class="qc-actions">
                                     <button class="btn-small btn-outline" @click="goToPattern(q.id)">
-                                        📖 Wzorzec
+                                        Wzorzec
                                     </button>
                                     <button class="btn-small" @click="goToExam(q.id)">
                                         Ćwicz to →

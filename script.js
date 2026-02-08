@@ -66,6 +66,17 @@ const app = createApp({ components: { 'app-header': HeaderComponent },
         const currentPattern = ref(null);
         const checkMode = ref(false);
 
+        // --- WORKFLOW LOGIC ---
+        // Przechowuje stan workflow dla każdego pytania (klucz ID -> wartość 0, 1 lub 2)
+        const userWorkflow = ref({}); 
+
+        // Definicje stanów
+        const workflowStates = [
+            { val: 0, label: 'Do napisania', class: 'wf-status-0' },
+            { val: 1, label: 'Czeka na spr.', class: 'wf-status-1' },
+            { val: 2, label: 'Sprawdzone', class: 'wf-status-2' }
+        ];
+
         // Formularz egzaminu
         const form = ref({
             intro: '', thesis: '',
@@ -138,6 +149,30 @@ const app = createApp({ components: { 'app-header': HeaderComponent },
                 ]
             }
         };
+                // Pobierz aktualny stan (domyślnie 0)
+        const getWorkflowStatus = (id) => {
+            return userWorkflow.value[id] !== undefined ? userWorkflow.value[id] : 0;
+        };
+
+        // Pobierz obiekt definicji dla obecnego stanu (żeby wiedzieć jaki tekst i klasę wyświetlić)
+        const getWorkflowDef = (id) => {
+            const status = getWorkflowStatus(id);
+            return workflowStates.find(s => s.val === status) || workflowStates[0];
+        };
+
+        // Zmień stan po kliknięciu (cykl: 0 -> 1 -> 2 -> 0)
+        const cycleWorkflowStatus = (id) => {
+            const current = getWorkflowStatus(id);
+            const next = (current + 1) % 3; // Modulo 3 zapewnia pętlę 0,1,2
+            
+            userWorkflow.value[id] = next;
+            
+            // Zapisujemy lokalnie
+            localStorage.setItem('matura_workflow_status', JSON.stringify(userWorkflow.value));
+            
+            // Opcjonalnie: Tutaj możesz dodać wysyłanie do Google Script, jeśli rozbudujesz backend
+            // sendWorkflowToBackend(id, next); 
+        };
 
         // --- FETCHING & INIT ---
         const fetchData = async () => {
@@ -149,6 +184,11 @@ const app = createApp({ components: { 'app-header': HeaderComponent },
                 answer_database.value = data.answers || [];
                 authorized_users.value = data.users || [];
                 all_progress_data.value = data.progress || {};
+                
+                const savedWorkflow = localStorage.getItem('matura_workflow_status');
+                if (savedWorkflow) {
+                    userWorkflow.value = JSON.parse(savedWorkflow);
+                }
 
                 const savedUser = localStorage.getItem('matura_last_user');
                 if (savedUser) {
@@ -325,7 +365,7 @@ const app = createApp({ components: { 'app-header': HeaderComponent },
             getStatus, hasAnswer, updateStatus, progressCount, statsPerLevel, isLoading,
             currentQuestion, currentPattern, form, checkMode,
             enableCheckMode, gradeScale, grades, setGrade, totalScore,
-            comparisonStructure, isMenuOpen
+            comparisonStructure, isMenuOpen,  getWorkflowDef, cycleWorkflowStatus
         };
     }
 });
